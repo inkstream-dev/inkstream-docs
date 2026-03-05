@@ -5,5 +5,5 @@ const withNextra = nextra({
 })
 
 export default withNextra({
-  /* config options here */
+  output: 'standalone',
 })

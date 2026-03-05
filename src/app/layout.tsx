@@ -19,7 +19,7 @@ const navbar = (
         ✦ Inkstream
       </span>
     }
-    projectLink="https://github.com/inkstream-dev"
+    projectLink="https://github.com/inkstream-dev/inkstream-editor"
   />
 )
 

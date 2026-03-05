@@ -1,0 +1,19 @@
+services:
+  inkstream-docs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: inkstream-docs:latest
+    container_name: inkstream-docs
+    restart: unless-stopped
+    ports:
+      - "8585:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+    # Uncomment if you need to pass a custom hostname (e.g. behind Traefik/Nginx)
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.inkstream-docs.rule=Host(`docs.inkstream.dev`)"
+    #   - "traefik.http.routers.inkstream-docs.entrypoints=websecure"
+    #   - "traefik.http.routers.inkstream-docs.tls.certresolver=letsencrypt"
