@@ -1,0 +1,49 @@
+---
+title: Basic Setup
+---
+
+# Basic Setup
+
+## Next.js App Router
+
+Components that use Inkstream must include the `"use client"` directive — ProseMirror interacts with browser APIs.
+
+```tsx filename="app/editor/page.tsx"
+"use client"
+
+import { RichTextEditor } from '@inkstream/react-editor'
+import {
+  boldPlugin, italicPlugin, underlinePlugin,
+  strikethroughPlugin, historyPlugin,
+} from '@inkstream/editor-core'
+
+const PLUGINS = [boldPlugin, italicPlugin, underlinePlugin, strikethroughPlugin, historyPlugin]
+
+export default function EditorPage() {
+  return (
+    <RichTextEditor
+      plugins={PLUGINS}
+      toolbarLayout={['bold', 'italic', 'underline', 'strikethrough', '|', 'history']}
+      onChange={(html) => console.log(html)}
+    />
+  )
+}
+```
+
+## Next.js Pages Router
+
+No directive needed. Same import pattern, usable directly in any page or component.
+
+## CSS
+
+Import the editor stylesheet once in your layout:
+
+```tsx filename="app/layout.tsx"
+import '@inkstream/react-editor/dist/styles.css'
+```
+
+Or in `pages/_app.tsx`:
+
+```tsx
+import '@inkstream/react-editor/dist/styles.css'
+```

@@ -1,0 +1,61 @@
+---
+title: Commands API
+---
+
+# Commands API
+
+Inkstream re-exports common ProseMirror commands and adds its own.
+
+## From `@inkstream/editor-core`
+
+```ts
+import {
+  toggleList,
+  setAlignment,
+  toggleBlockquote,
+  insertHorizontalRule,
+} from '@inkstream/editor-core'
+```
+
+### `toggleList(listType, itemType)`
+
+```ts
+const cmd = toggleList(schema.nodes.bullet_list, schema.nodes.list_item)
+cmd(state, dispatch, view) // returns boolean
+```
+
+### `setAlignment(alignment)`
+
+```ts
+setAlignment('center')(state, dispatch, view)
+// alignment: 'left' | 'center' | 'right' | 'justify'
+```
+
+## From `prosemirror-commands`
+
+```ts
+import { toggleMark, setBlockType, wrapIn } from 'prosemirror-commands'
+
+// Toggle a mark
+const boldCmd = toggleMark(schema.marks.bold)
+
+// Set block type (e.g., heading)
+const h1Cmd = setBlockType(schema.nodes.heading, { level: 1 })
+
+// Wrap selection in a node
+const blockquoteCmd = wrapIn(schema.nodes.blockquote)
+```
+
+## Command signature
+
+All commands follow the ProseMirror `Command` type:
+
+```ts
+type Command = (
+  state: EditorState,
+  dispatch?: (tr: Transaction) => void,
+  view?: EditorView
+) => boolean
+```
+
+Return `true` if the command is applicable. Call `dispatch(tr)` to apply the change.

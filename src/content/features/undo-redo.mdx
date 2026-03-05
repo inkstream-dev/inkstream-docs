@@ -1,0 +1,34 @@
+---
+title: Undo / Redo
+---
+
+# Undo / Redo
+
+## Usage
+
+```tsx
+import { undoPlugin, redoPlugin } from '@inkstream/editor-core'
+
+<RichTextEditor
+  plugins={[undoPlugin, redoPlugin]}
+  toolbarLayout={['undo', 'redo']}
+/>
+```
+
+Or use the combined `historyPlugin` which registers both at once:
+
+```tsx
+import { historyPlugin } from '@inkstream/editor-core'
+
+<RichTextEditor
+  plugins={[historyPlugin]}
+  toolbarLayout={['undo', 'redo']}
+/>
+```
+
+## Keyboard shortcuts
+
+| Action | Shortcut |
+|--------|----------|
+| Undo | `Mod-z` |
+| Redo | `Mod-Shift-z` or `Mod-y` |

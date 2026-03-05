@@ -1,0 +1,30 @@
+---
+title: Links
+---
+
+# Links
+
+## Installation
+
+```bash
+pnpm add @inkstream/link-bubble
+```
+
+## Usage
+
+```tsx
+import { linkPlugin } from '@inkstream/link-bubble'
+
+<RichTextEditor
+  plugins={[linkPlugin]}
+  toolbarLayout={['link']}
+/>
+```
+
+## Link bubble
+
+When the cursor is inside a link, a floating bubble appears with options to edit the URL, open the link in a new tab, or remove it.
+
+## Keyboard shortcut
+
+`Mod-k` opens the link insertion dialog.

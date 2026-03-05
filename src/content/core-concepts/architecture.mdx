@@ -1,0 +1,64 @@
+---
+title: Editor Architecture
+---
+
+# Editor Architecture
+
+## Monorepo structure
+
+```
+Inkstream/
+├── packages/
+│   ├── editor-core/        ← Plugin system, schema, license manager
+│   ├── react-editor/       ← RichTextEditor React component
+│   ├── link-bubble/        ← Link editing UI plugin
+│   ├── image/              ← Image insertion plugin
+│   ├── heading/            ← Heading levels H1–H6
+│   ├── font-family/        ← Font family picker
+│   └── pro-plugins/        ← Pro/Premium features (private registry)
+└── apps/
+    └── demo/               ← Next.js demo application
+```
+
+## Initialisation flow
+
+```
+1. Instantiate PluginManager
+2. Register plugins → collect nodes, marks, input rules, keymaps
+3. Call inkstreamSchema(manager) → build ProseMirror Schema
+4. Create EditorState with schema + plugins
+5. Mount EditorView in DOM
+6. Wire toolbar → commands dispatch to EditorView
+```
+
+## Data flow
+
+```
+User keystroke / toolbar click
+        ↓
+  ProseMirror Transaction
+        ↓
+  EditorState updated (immutable)
+        ↓
+  EditorView re-renders DOM
+        ↓
+  onChange callback fires (HTML string)
+```
+
+## Schema
+
+The ProseMirror schema is **dynamic** — it is built from the union of all registered plugin node/mark specs. This means:
+
+- Plugins are independent; adding/removing one does not affect others
+- The schema must be built **after** all plugins are registered
+- Never pass `new PluginManager()` to `inkstreamSchema()` — always use the same instance that has plugins registered
+
+## React integration
+
+`RichTextEditor` uses two key hooks:
+
+| Hook | Responsibility |
+|------|----------------|
+| `useMemo` | Builds schema and ProseMirror plugins list when `plugins` prop changes |
+| `useEffect` | Creates/destroys `EditorView`; mounts into the ref'd DOM node |
+| `useLazyPlugins` | Asynchronously loads Pro plugin chunks after license validation |

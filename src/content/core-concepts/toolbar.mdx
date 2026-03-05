@@ -1,0 +1,71 @@
+---
+title: Toolbar System
+---
+
+import { Callout } from 'nextra/components'
+
+# Toolbar System
+
+## toolbarLayout prop
+
+Pass an ordered array of plugin IDs to control which buttons appear and in what order:
+
+```tsx
+<RichTextEditor
+  plugins={plugins}
+  toolbarLayout={['bold', 'italic', '|', 'heading', '|', 'undo', 'redo']}
+/>
+```
+
+- Items not listed are **hidden**
+- `'|'` inserts a visual separator
+- If `toolbarLayout` is empty (`[]`), **all** registered toolbar items appear in registration order
+
+## ToolbarItem interface
+
+```ts
+interface ToolbarItem {
+  id: string                                  // must match plugin.name (or be unique)
+  icon?: string                               // fallback text/emoji
+  iconHtml?: string                           // raw SVG string (preferred)
+  label?: string                              // text label shown next to icon
+  tooltip?: string                            // hover tooltip
+  command: Command                            // ProseMirror command
+  isActive?: (state: EditorState) => boolean // active/highlighted state
+  type?: 'button' | 'dropdown'               // dropdown renders submenu
+  children?: ToolbarItem[]                   // submenu items (for dropdowns)
+}
+```
+
+## Dropdown toolbar items
+
+```ts
+{
+  id: 'heading',
+  type: 'dropdown',
+  icon: 'H',
+  tooltip: 'Heading',
+  command: () => false, // parent doesn't execute
+  children: [
+    { id: 'heading-1', label: 'H1', command: setHeading(schema, 1) },
+    { id: 'heading-2', label: 'H2', command: setHeading(schema, 2) },
+  ],
+}
+```
+
+## pluginOptions
+
+Some plugins accept runtime options via the `pluginOptions` prop:
+
+```tsx
+<RichTextEditor
+  plugins={plugins}
+  pluginOptions={{
+    image: { uploadUrl: '/api/upload', maxSizeMb: 5 },
+  }}
+/>
+```
+
+<Callout type="info">
+  Options are forwarded to `getToolbarItems(schema, options)` at render time.
+</Callout>

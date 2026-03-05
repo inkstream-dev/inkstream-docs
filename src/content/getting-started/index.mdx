@@ -1,0 +1,29 @@
+---
+title: Introduction
+---
+
+# Introduction
+
+Inkstream is a **developer SDK** for embedding a rich text editor into React applications. It is built on [ProseMirror](https://prosemirror.net) and exposes a clean plugin API, a React component, and a licensing system for freemium monetisation.
+
+## Architecture overview
+
+```
+@inkstream/react-editor       ← React component + toolbar + hooks
+  └── @inkstream/editor-core  ← Plugin system, schema, license manager
+        └── prosemirror-*     ← ProseMirror document model & state
+```
+
+External packages (registered as plugins):
+- `@inkstream/heading`
+- `@inkstream/font-family`
+- `@inkstream/link-bubble`
+- `@inkstream/image`
+- `@inkstream-dev/pro-plugins` *(private — requires license)*
+
+## Design goals
+
+- **Register only what you use** — each feature is a plugin; unused plugins add zero code
+- **Schema is dynamic** — the ProseMirror schema is built from registered plugins at initialisation time
+- **Secure by default** — without a `licenseValidationEndpoint`, all plugins are treated as `free` tier
+- **Undoable by default** — all content mutations go through ProseMirror transactions; undo/redo works out of the box

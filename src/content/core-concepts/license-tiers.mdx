@@ -1,0 +1,94 @@
+---
+title: License Tiers
+---
+
+import { Callout } from 'nextra/components'
+
+# License Tiers
+
+## Overview
+
+Inkstream uses **server-validated licensing**. The client-side key format check is for UX only and never grants feature access.
+
+```
+User enters key
+     ↓
+useLicenseValidation() → POST /api/validate-license
+     ↓
+Server returns { isValid: true, tier: 'pro' }
+     ↓
+validatedTier flows into RichTextEditor + useLazyPlugins
+     ↓
+Pro plugins are loaded and activated
+```
+
+## License key format
+
+```
+INKSTREAM-{FREE|PRO|PREMIUM}-[A-Z0-9]+
+
+Examples:
+  INKSTREAM-FREE-DEMO1234
+  INKSTREAM-PRO-ABC123XYZ
+  INKSTREAM-PREMIUM-ENTERPRISE01
+```
+
+## Validation endpoint
+
+Implement a Next.js API route (or equivalent):
+
+```ts filename="app/api/validate-license/route.ts"
+import { NextRequest, NextResponse } from 'next/server'
+
+export async function POST(request: NextRequest) {
+  const { licenseKey } = await request.json()
+
+  // Replace with your database/licensing service lookup
+  const record = await db.licenses.findOne({ key: licenseKey, active: true })
+
+  if (!record) {
+    return NextResponse.json({ isValid: false, tier: 'free' })
+  }
+
+  return NextResponse.json({ isValid: true, tier: record.tier })
+}
+```
+
+## Using validation in the editor
+
+```tsx
+import { useLicenseValidation } from '@inkstream/react-editor'
+
+function MyEditor() {
+  const { validatedTier, isValidating } = useLicenseValidation({
+    licenseKey: userEnteredKey,
+    validationEndpoint: '/api/validate-license',
+  })
+
+  return (
+    <RichTextEditor
+      plugins={freePlugins}
+      licenseValidationEndpoint="/api/validate-license"
+      licenseKey={userEnteredKey}
+    />
+  )
+}
+```
+
+<Callout type="warning">
+  Without a `licenseValidationEndpoint`, the tier is permanently `'free'`. This is intentional — **secure by default**.
+</Callout>
+
+## `LicenseManager` helpers
+
+```ts
+import { LicenseManager } from '@inkstream/editor-core'
+
+// Format check only (no security value)
+LicenseManager.isValidKeyFormat('INKSTREAM-PRO-ABC123') // true
+
+// Pure tier comparison
+LicenseManager.canTierAccess('pro', 'pro')      // true
+LicenseManager.canTierAccess('free', 'pro')     // false
+LicenseManager.canTierAccess('premium', 'pro')  // true
+```

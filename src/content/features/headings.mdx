@@ -1,0 +1,42 @@
+---
+title: Headings
+---
+
+# Headings
+
+## Installation
+
+```bash
+pnpm add @inkstream/heading
+```
+
+## Usage
+
+```tsx
+import { headingPlugin } from '@inkstream/heading'
+
+<RichTextEditor
+  plugins={[headingPlugin]}
+  toolbarLayout={['heading']}
+/>
+```
+
+## Heading levels
+
+The plugin renders a dropdown with H1–H6. Each level also supports a Markdown-style input rule:
+
+| Syntax | Result |
+|--------|--------|
+| `# ` + Space | Heading 1 |
+| `## ` + Space | Heading 2 |
+| `### ` + Space | Heading 3 |
+| ... | ... |
+
+## Keyboard shortcuts
+
+| Action | Shortcut |
+|--------|----------|
+| Heading 1 | `Mod-Alt-1` |
+| Heading 2 | `Mod-Alt-2` |
+| Heading 3 | `Mod-Alt-3` |
+| Normal paragraph | `Mod-Alt-0` |

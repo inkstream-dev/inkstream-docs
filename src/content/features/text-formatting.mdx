@@ -1,0 +1,50 @@
+---
+title: Text Formatting
+---
+
+# Text Formatting
+
+## Available plugins
+
+| Plugin | Export | Shortcut |
+|--------|--------|----------|
+| Bold | `boldPlugin` | `Mod-b` |
+| Italic | `italicPlugin` | `Mod-i` |
+| Underline | `underlinePlugin` | `Mod-u` |
+| Strikethrough | `strikethroughPlugin` | — |
+| Superscript | `superscriptPlugin` | `Mod-.` |
+| Subscript | `subscriptPlugin` | `Mod-,` |
+| Text Color | `textColorPlugin` | — |
+| Highlight | `highlightPlugin` | — |
+| Inline Code | `inlineCodePlugin` | `` Mod-` `` |
+
+## Usage
+
+```tsx
+import {
+  boldPlugin, italicPlugin, underlinePlugin, strikethroughPlugin,
+  superscriptPlugin, subscriptPlugin,
+  textColorPlugin, highlightPlugin, inlineCodePlugin,
+} from '@inkstream/editor-core'
+
+<RichTextEditor
+  plugins={[boldPlugin, italicPlugin, underlinePlugin, strikethroughPlugin]}
+  toolbarLayout={['bold', 'italic', 'underline', 'strikethrough']}
+/>
+```
+
+## Text color
+
+`textColorPlugin` renders a color picker dropdown in the toolbar. The color is stored as an inline `style` on a `span` mark.
+
+```tsx
+<RichTextEditor
+  plugins={[textColorPlugin, highlightPlugin]}
+  toolbarLayout={['textColor', 'highlight']}
+  pluginOptions={{
+    textColor: {
+      colors: ['#000000', '#FF0000', '#0000FF', '#008000'],
+    },
+  }}
+/>
+```

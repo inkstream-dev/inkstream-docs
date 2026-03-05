@@ -1,0 +1,7 @@
+{
+  "editor": "RichTextEditor",
+  "plugin-interface": "Plugin Interface",
+  "toolbar-item": "ToolbarItem",
+  "license-manager": "LicenseManager",
+  "commands-api": "Commands API"
+}

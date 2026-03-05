@@ -1,0 +1,63 @@
+---
+title: Commands
+---
+
+# Commands
+
+Inkstream uses the standard **ProseMirror command** pattern — a command is a function `(state, dispatch?, view?) => boolean`.
+
+## Using commands
+
+Commands are wired up automatically via toolbar `command` field and `getKeymap`. You can also dispatch them directly:
+
+```ts
+import { boldPlugin } from '@inkstream/editor-core'
+
+// Get the command from the plugin
+const schema = ...
+const [toggleBold] = boldPlugin.getToolbarItems!(schema).map(t => t.command)
+
+// Dispatch it
+toggleBold(view.state, view.dispatch, view)
+```
+
+## Built-in command helpers
+
+```ts
+import { toggleMark } from 'prosemirror-commands'
+import { toggleList } from '@inkstream/editor-core'
+
+// Toggle a mark (bold, italic, etc.)
+const boldCmd = toggleMark(schema.marks.bold)
+
+// Toggle a list type
+const bulletCmd = toggleList(schema.nodes.bullet_list, schema.nodes.list_item)
+```
+
+## Custom commands
+
+```ts
+import type { Command } from 'prosemirror-state'
+
+const insertHorizontalRule: Command = (state, dispatch) => {
+  const { hr } = state.schema.nodes
+  if (!hr) return false
+  if (dispatch) {
+    dispatch(state.tr.replaceSelectionWith(hr.create()))
+  }
+  return true
+}
+```
+
+## isActive helpers
+
+Toolbar items include an `isActive` predicate to highlight active state:
+
+```ts
+{
+  id: 'bold',
+  command: toggleMark(schema.marks.bold),
+  isActive: (state) =>
+    state.selection.$from.marks().some(m => m.type === schema.marks.bold),
+}
+```

@@ -1,0 +1,70 @@
+---
+title: Best Practices
+---
+
+# Best Practices
+
+## Memoize the plugins array
+
+Passing a new array reference on every render re-creates the ProseMirror schema unnecessarily:
+
+```tsx
+// ❌ Creates new array every render
+<RichTextEditor plugins={[boldPlugin, italicPlugin]} />
+
+// ✅ Stable reference
+const PLUGINS = [boldPlugin, italicPlugin]
+<RichTextEditor plugins={PLUGINS} />
+```
+
+## Keep schema consistent
+
+Once an editor is mounted, do not change the set of free plugins. The ProseMirror schema is immutable after creation. If plugins change (e.g., lazy pro plugins load), `RichTextEditor` tears down and re-creates the editor view automatically.
+
+## Use `toolbarLayout` to hide unused items
+
+If you have many plugins but want a minimal toolbar, use `toolbarLayout` to show only what you need:
+
+```tsx
+<RichTextEditor
+  plugins={ALL_PLUGINS}          // load all for schema completeness
+  toolbarLayout={['bold', 'italic', 'link']}  // show only these 3
+/>
+```
+
+## Validate licenses server-side
+
+Never trust client-side license key parsing. Always use a `licenseValidationEndpoint`:
+
+```tsx
+// ❌ Format check only — provides no security
+const isValid = LicenseManager.isValidKeyFormat(key)
+
+// ✅ Server-validated tier
+const { validatedTier } = useLicenseValidation({
+  licenseKey: key,
+  validationEndpoint: '/api/validate-license',
+})
+```
+
+## Use "use client" in Next.js App Router
+
+Every component that imports from Inkstream packages must include the directive:
+
+```tsx
+"use client"
+
+import { RichTextEditor } from '@inkstream/react-editor'
+```
+
+## Custom plugin naming
+
+Plugin `name` values must be globally unique. Use a namespace prefix for custom plugins to avoid collisions with future Inkstream built-ins:
+
+```ts
+// ❌ Might collide
+createPlugin({ name: 'callout', ... })
+
+// ✅ Namespaced
+createPlugin({ name: 'myapp-callout', ... })
+```

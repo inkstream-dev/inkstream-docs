@@ -1,0 +1,38 @@
+---
+title: Task Lists
+---
+
+# Task Lists
+
+Task lists render checkboxes that users can toggle directly in the editor.
+
+## Usage
+
+```tsx
+import { taskListPlugin } from '@inkstream/editor-core'
+
+<RichTextEditor
+  plugins={[taskListPlugin]}
+  toolbarLayout={['taskList']}
+/>
+```
+
+## Input rule
+
+Type `[ ] ` or `[x] ` at the start of a line to create a task item:
+
+```
+[ ] Buy groceries
+[x] Write documentation
+```
+
+## Storage
+
+Task list state is serialised as HTML with `data-checked` attributes:
+
+```html
+<ul data-type="task-list">
+  <li data-checked="false">Buy groceries</li>
+  <li data-checked="true">Write documentation</li>
+</ul>
+```

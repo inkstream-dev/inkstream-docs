@@ -1,0 +1,70 @@
+---
+title: Your First Editor
+---
+
+import { Callout } from 'nextra/components'
+
+# Your First Editor
+
+A minimal but complete example with all standard free plugins enabled.
+
+```tsx filename="components/FullEditor.tsx"
+"use client"
+
+import { useState } from 'react'
+import { RichTextEditor } from '@inkstream/react-editor'
+import {
+  boldPlugin, italicPlugin, underlinePlugin, strikethroughPlugin,
+  textColorPlugin, highlightPlugin, alignmentPlugin,
+  bulletListPlugin, orderedListPlugin, taskListPlugin,
+  blockquotePlugin, codePlugin, dividerPlugin,
+  undoPlugin, redoPlugin,
+} from '@inkstream/editor-core'
+import { headingPlugin } from '@inkstream/heading'
+import { imagePlugin } from '@inkstream/image'
+import { linkPlugin } from '@inkstream/link-bubble'
+
+const PLUGINS = [
+  headingPlugin, boldPlugin, italicPlugin, underlinePlugin, strikethroughPlugin,
+  textColorPlugin, highlightPlugin, alignmentPlugin,
+  bulletListPlugin, orderedListPlugin, taskListPlugin,
+  blockquotePlugin, codePlugin, imagePlugin, linkPlugin,
+  dividerPlugin, undoPlugin, redoPlugin,
+]
+
+const TOOLBAR = [
+  'heading', '|',
+  'bold', 'italic', 'underline', 'strikethrough', '|',
+  'textColor', 'highlight', '|',
+  'alignment', '|',
+  'bulletList', 'orderedList', 'taskList', '|',
+  'blockquote', 'code', 'image', 'link', '|',
+  'divider', 'undo', 'redo',
+]
+
+export default function FullEditor() {
+  const [html, setHtml] = useState('')
+
+  return (
+    <div>
+      <RichTextEditor
+        initialContent="<p>Start typing...</p>"
+        plugins={PLUGINS}
+        toolbarLayout={TOOLBAR}
+        onChange={setHtml}
+      />
+      <pre style={{ marginTop: 16, fontSize: 12 }}>{html}</pre>
+    </div>
+  )
+}
+```
+
+<Callout type="info">
+  The `toolbarLayout` array controls both **order** and **visibility**. Items not listed are hidden. Use `'|'` to insert a visual separator.
+</Callout>
+
+## Next steps
+
+- Add [Pro features](/pro-features) with a license key
+- Create a [custom plugin](/guides/custom-plugins)
+- Explore the [Plugin API reference](/api-reference/plugin-interface)

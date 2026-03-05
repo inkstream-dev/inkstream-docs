@@ -1,0 +1,42 @@
+---
+title: AI Assistant
+---
+
+import { Callout } from 'nextra/components'
+
+# AI Assistant
+
+<Callout type="warning">
+  The AI Assistant plugin is a **Premium** feature and is currently in development. It is available as a stub in `@inkstream-dev/pro-plugins` for early integration.
+</Callout>
+
+## Planned features
+
+- **Ask AI** — select text and ask for rewrite, summarise, or expand
+- **Generate** — insert AI-generated content at cursor
+- **Grammar check** — highlight and suggest corrections inline
+- **Custom model endpoint** — bring your own OpenAI / Anthropic key
+
+## Integration preview
+
+```tsx
+const { plugins } = useLazyPlugins({
+  validatedTier: 'premium',
+  loaders: [{
+    tier: 'premium',
+    loader: (tier) =>
+      import('@inkstream-dev/pro-plugins').then(m => ({
+        aiAssistant: m.createProPlugins(tier).aiAssistant,
+      })),
+  }],
+})
+```
+
+```tsx
+<RichTextEditor
+  plugins={[...freePlugins, ...plugins]}
+  pluginOptions={{
+    aiAssistant: { endpoint: '/api/ai', model: 'gpt-4o' },
+  }}
+/>
+```

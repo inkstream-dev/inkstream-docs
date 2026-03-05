@@ -1,0 +1,69 @@
+---
+title: ToolbarItem
+---
+
+# ToolbarItem
+
+## Interface
+
+```ts
+interface ToolbarItem {
+  /** Unique ID — must match plugin.name or be globally unique */
+  id: string
+
+  /** Fallback icon (text/emoji) */
+  icon?: string
+
+  /** Inline SVG string (preferred over icon) */
+  iconHtml?: string
+
+  /** Text label shown next to icon (especially in dropdowns) */
+  label?: string
+
+  /** Tooltip text on hover */
+  tooltip?: string
+
+  /** ProseMirror command executed on click */
+  command: Command
+
+  /** Returns true when the feature is active at current selection */
+  isActive?: (state: EditorState) => boolean
+
+  /** 'dropdown' renders a submenu; defaults to 'button' */
+  type?: 'button' | 'dropdown'
+
+  /** Sub-items for type='dropdown' */
+  children?: ToolbarItem[]
+}
+```
+
+## Button example
+
+```ts
+{
+  id: 'bold',
+  iconHtml: '<svg ...>...</svg>',
+  tooltip: 'Bold (Mod+B)',
+  command: toggleMark(schema.marks.bold),
+  isActive: (state) =>
+    state.selection.$from.marks().some(m => m.type === schema.marks.bold),
+}
+```
+
+## Dropdown example
+
+```ts
+{
+  id: 'alignment',
+  type: 'dropdown',
+  iconHtml: '<svg ...>...</svg>',
+  tooltip: 'Text alignment',
+  command: () => false,
+  children: [
+    { id: 'align-left',    label: 'Left',    command: setAlignment('left') },
+    { id: 'align-center',  label: 'Center',  command: setAlignment('center') },
+    { id: 'align-right',   label: 'Right',   command: setAlignment('right') },
+    { id: 'align-justify', label: 'Justify', command: setAlignment('justify') },
+  ],
+}
+```

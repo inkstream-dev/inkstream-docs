@@ -1,0 +1,35 @@
+---
+title: Lists
+---
+
+# Lists
+
+## Plugins
+
+| Plugin | Export |
+|--------|--------|
+| Bullet list | `bulletListPlugin` |
+| Ordered list | `orderedListPlugin` |
+| Indent | `indentPlugin` |
+
+## Usage
+
+```tsx
+import { bulletListPlugin, orderedListPlugin, indentPlugin } from '@inkstream/editor-core'
+
+<RichTextEditor
+  plugins={[bulletListPlugin, orderedListPlugin, indentPlugin]}
+  toolbarLayout={['bulletList', 'orderedList', '|', 'indent', 'outdent']}
+/>
+```
+
+## Input rules
+
+| Type | Trigger |
+|------|---------|
+| Bullet list | `- ` or `* ` at line start |
+| Ordered list | `1. ` at line start |
+
+## Nesting
+
+Use `Tab` to indent a list item and `Shift-Tab` to outdent.

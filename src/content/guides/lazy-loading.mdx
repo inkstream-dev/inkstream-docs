@@ -1,0 +1,78 @@
+---
+title: Lazy Loading Pro Plugins
+---
+
+import { Callout } from 'nextra/components'
+
+# Lazy Loading Pro Plugins
+
+`useLazyPlugins` enables code-split loading of Pro/Premium plugins. The bundle is only downloaded after the license is validated server-side.
+
+## Setup
+
+```tsx
+import { useLazyPlugins } from '@inkstream/react-editor'
+
+const { plugins, isLoading } = useLazyPlugins({
+  validatedTier,           // from useLicenseValidation
+  loaders: [
+    {
+      tier: 'pro',         // minimum tier required to load
+      loader: (tier) =>    // called with the validated tier
+        import('@inkstream-dev/pro-plugins').then(m => ({
+          table: m.createProPlugins(tier).table,
+        })),
+    },
+  ],
+})
+```
+
+## Full example
+
+```tsx
+"use client"
+
+import { RichTextEditor, useLicenseValidation, useLazyPlugins } from '@inkstream/react-editor'
+import { boldPlugin, italicPlugin, historyPlugin } from '@inkstream/editor-core'
+
+const FREE_PLUGINS = [boldPlugin, italicPlugin, historyPlugin]
+
+export default function Editor({ licenseKey }: { licenseKey: string }) {
+  const { validatedTier, isValidating } = useLicenseValidation({
+    licenseKey,
+    validationEndpoint: '/api/validate-license',
+  })
+
+  const { plugins: proPlugins, isLoading } = useLazyPlugins({
+    validatedTier,
+    loaders: [
+      {
+        tier: 'pro',
+        loader: (tier) =>
+          import('@inkstream-dev/pro-plugins').then(m => {
+            const { table, advancedExport } = m.createProPlugins(tier)
+            return { table, advancedExport }
+          }),
+      },
+    ],
+  })
+
+  return (
+    <RichTextEditor
+      plugins={[...FREE_PLUGINS, ...proPlugins]}
+      toolbarLayout={['bold', 'italic', '|', 'table', '|', 'undo', 'redo']}
+    />
+  )
+}
+```
+
+<Callout type="warning">
+  The `licenseKey` option on `useLazyPlugins` is **deprecated** — it always resolves to `'free'` tier. Always pass `validatedTier` from `useLicenseValidation`.
+</Callout>
+
+## How it works
+
+1. `useLazyPlugins` watches `validatedTier`
+2. When tier changes to `'pro'` or `'premium'`, eligible loaders are called
+3. Each loader is a dynamic `import()` — bundled separately by your build tool
+4. On load failure, `console.error` is called and the plugin list stays unchanged

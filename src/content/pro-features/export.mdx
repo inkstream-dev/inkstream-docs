@@ -1,0 +1,34 @@
+---
+title: Export
+---
+
+# Export (Markdown / CSV)
+
+## Markdown export
+
+```tsx
+import { exportToMarkdown } from '@inkstream-dev/pro-plugins'
+
+const markdown = exportToMarkdown(editorView.state.doc)
+```
+
+Supports: headings, bold/italic/inline-code, links, images, blockquotes, ordered/unordered lists, code blocks, horizontal rules, and tables (GFM format).
+
+## CSV export
+
+Tables can be exported to CSV directly from the Table toolbar or programmatically:
+
+```tsx
+import { exportTableToCSV } from '@inkstream-dev/pro-plugins'
+
+const csv = exportTableToCSV(tableNode)
+```
+
+## CSV import
+
+```tsx
+import { importTableFromCSV } from '@inkstream-dev/pro-plugins'
+
+// Returns a ProseMirror table Node
+const tableNode = importTableFromCSV(csvString, schema)
+```

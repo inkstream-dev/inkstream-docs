@@ -1,0 +1,81 @@
+---
+title: Installation
+---
+
+import { Tabs } from 'nextra/components'
+
+# Installation
+
+## Requirements
+
+- Node.js 18+
+- React 18+
+- Next.js 13+ (App Router or Pages Router)
+
+## Install packages
+
+<Tabs items={['pnpm', 'npm', 'yarn']}>
+  <Tabs.Tab>
+```bash
+pnpm add @inkstream/react-editor @inkstream/editor-core
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```bash
+npm install @inkstream/react-editor @inkstream/editor-core
+```
+  </Tabs.Tab>
+  <Tabs.Tab>
+```bash
+yarn add @inkstream/react-editor @inkstream/editor-core
+```
+  </Tabs.Tab>
+</Tabs>
+
+## Optional packages
+
+```bash
+# Heading levels (H1–H6)
+pnpm add @inkstream/heading
+
+# Font family picker
+pnpm add @inkstream/font-family
+
+# Inline link editing bubble
+pnpm add @inkstream/link-bubble
+
+# Image insertion
+pnpm add @inkstream/image
+```
+
+## Pro plugins
+
+Pro plugins are distributed via a **private npm registry** on GitHub Packages. A paid license token is required.
+
+```bash
+# Configure the registry (one-time)
+echo "@inkstream-dev:registry=https://npm.pkg.github.com" >> .npmrc
+echo "//npm.pkg.github.com/:_authToken=YOUR_TOKEN" >> .npmrc
+
+# Install
+pnpm add @inkstream-dev/pro-plugins
+```
+
+See the [Pro Setup guide](/pro-features/setup) for full instructions.
+
+## ProseMirror peer dependencies
+
+Inkstream pins all ProseMirror packages via `pnpm.overrides`. If you are using pnpm, add this to your root `package.json`:
+
+```json
+{
+  "pnpm": {
+    "overrides": {
+      "prosemirror-model": "^1.19.0",
+      "prosemirror-state": "^1.4.0",
+      "prosemirror-view": "^1.32.0",
+      "prosemirror-transform": "^1.7.0"
+    }
+  }
+}
+```

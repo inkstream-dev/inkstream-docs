@@ -1,0 +1,44 @@
+---
+title: Images
+---
+
+# Images
+
+## Installation
+
+```bash
+pnpm add @inkstream/image
+```
+
+## Usage
+
+```tsx
+import { imagePlugin } from '@inkstream/image'
+
+<RichTextEditor
+  plugins={[imagePlugin]}
+  toolbarLayout={['image']}
+  pluginOptions={{
+    image: {
+      uploadUrl: '/api/upload-image',
+      maxSizeMb: 10,
+    },
+  }}
+/>
+```
+
+## Upload endpoint
+
+The plugin POSTs a `multipart/form-data` request to `uploadUrl` and expects a JSON response:
+
+```json
+{ "url": "https://cdn.example.com/images/abc123.jpg" }
+```
+
+## Features
+
+- Drag-and-drop upload
+- Paste from clipboard
+- Resizable via drag handles
+- Alt text via right-click menu
+- Markdown export: `![alt](url)`

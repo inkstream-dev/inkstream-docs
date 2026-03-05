@@ -1,0 +1,93 @@
+---
+title: Plugin System
+---
+
+import { Callout } from 'nextra/components'
+
+# Plugin System
+
+Every feature in Inkstream is a **plugin** — a plain object implementing the `Plugin` interface. Plugins contribute nodes/marks to the schema, ProseMirror state plugins, toolbar buttons, input rules, and keyboard shortcuts.
+
+## Plugin interface
+
+```ts
+interface Plugin {
+  name: string               // unique ID — also used as toolbar item ID
+  tier?: 'free' | 'pro' | 'premium'   // defaults to 'free'
+  nodes?: Record<string, NodeSpec>
+  marks?: Record<string, MarkSpec>
+  getProseMirrorPlugins?(schema: Schema): PMPlugin[]
+  getToolbarItems?(schema: Schema, options?: Record<string, unknown>): ToolbarItem[]
+  getInputRules?(schema: Schema): InputRule[]
+  getKeymap?(schema: Schema): Record<string, Command>
+}
+```
+
+## Creating a plugin
+
+Always use `createPlugin()` from `editor-core`. It provides type safety and sets sensible defaults:
+
+```ts
+import { createPlugin } from '@inkstream/editor-core'
+import { toggleMark } from 'prosemirror-commands'
+
+export const superscriptPlugin = createPlugin({
+  name: 'superscript',
+  marks: {
+    superscript: {
+      parseDOM: [{ tag: 'sup' }],
+      toDOM: () => ['sup', 0],
+    },
+  },
+  getProseMirrorPlugins: (schema) => [],
+  getToolbarItems: (schema) => [
+    {
+      id: 'superscript',
+      icon: 'X²',
+      tooltip: 'Superscript',
+      command: toggleMark(schema.marks.superscript),
+      isActive: (state) => !!schema.marks.superscript &&
+        state.selection.$from.marks().some(m => m.type === schema.marks.superscript),
+    },
+  ],
+  getKeymap: (schema) => ({
+    'Mod-.': toggleMark(schema.marks.superscript),
+  }),
+})
+```
+
+## PluginManager
+
+`PluginManager` is the central registry. It:
+
+1. Accepts plugin registrations (`.register(plugin)`)
+2. Merges all `nodes` and `marks` into a single spec map
+3. Provides the merged specs to `inkstreamSchema(manager)`
+
+```ts
+import { PluginManager, inkstreamSchema } from '@inkstream/editor-core'
+
+const manager = new PluginManager()
+manager.register(boldPlugin)
+manager.register(italicPlugin)
+
+const schema = inkstreamSchema(manager)
+```
+
+<Callout>
+  In `RichTextEditor`, this is handled automatically. You only need to interact with `PluginManager` directly when building a custom editor shell.
+</Callout>
+
+## Plugin tiers
+
+```ts
+type LicenseTier = 'free' | 'pro' | 'premium'
+```
+
+| Tier | Who can use it |
+|------|---------------|
+| `free` | Everyone — no license required |
+| `pro` | Pro license holders |
+| `premium` | Premium license holders |
+
+`LicenseManager.canTierAccess(userTier, requiredTier)` performs the comparison. Without a `licenseValidationEndpoint`, the system always uses `'free'`.

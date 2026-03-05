@@ -1,0 +1,30 @@
+---
+title: Blockquote
+---
+
+# Blockquote
+
+## Usage
+
+```tsx
+import { blockquotePlugin } from '@inkstream/editor-core'
+
+<RichTextEditor
+  plugins={[blockquotePlugin]}
+  toolbarLayout={['blockquote']}
+/>
+```
+
+## Keyboard shortcut
+
+`Mod-Shift-b` toggles a blockquote on the current paragraph.
+
+## Input rule
+
+Type `> ` at the start of a line to create a blockquote.
+
+## HTML output
+
+```html
+<blockquote><p>This is a quoted passage.</p></blockquote>
+```

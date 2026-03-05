@@ -1,0 +1,76 @@
+---
+title: Styling the Editor
+---
+
+# Styling the Editor
+
+## CSS variables
+
+The editor exposes CSS variables for theming. Override them in your global stylesheet:
+
+```css
+.inkstream-editor {
+  --ink-border: #e2e8f0;
+  --ink-toolbar-bg: #ffffff;
+  --ink-toolbar-border: #e2e8f0;
+  --ink-button-hover: #f1f5f9;
+  --ink-button-active: #e2e8f0;
+  --ink-focus-ring: #3b82f6;
+  --ink-content-font: 'Inter', sans-serif;
+  --ink-content-font-size: 16px;
+  --ink-content-line-height: 1.6;
+  --ink-content-min-height: 200px;
+}
+```
+
+## Dark mode
+
+```css
+.dark .inkstream-editor {
+  --ink-border: #334155;
+  --ink-toolbar-bg: #1e293b;
+  --ink-toolbar-border: #334155;
+  --ink-button-hover: #334155;
+  --ink-button-active: #475569;
+}
+```
+
+## Editor container
+
+```tsx
+<div className="my-editor-wrapper">
+  <RichTextEditor plugins={plugins} />
+</div>
+```
+
+```css
+.my-editor-wrapper .inkstream-editor {
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.my-editor-wrapper .inkstream-content {
+  min-height: 400px;
+  padding: 24px;
+}
+```
+
+## Prose content styling
+
+Target `.inkstream-content` for typography inside the editor:
+
+```css
+.inkstream-content {
+  font-family: 'Georgia', serif;
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.inkstream-content h1 { font-size: 2rem; font-weight: 700; }
+.inkstream-content h2 { font-size: 1.5rem; font-weight: 600; }
+.inkstream-content blockquote {
+  border-left: 4px solid #6366f1;
+  padding-left: 1rem;
+  color: #64748b;
+}
+```

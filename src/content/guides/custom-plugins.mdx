@@ -1,0 +1,93 @@
+---
+title: Creating Custom Plugins
+---
+
+import { Callout } from 'nextra/components'
+
+# Creating Custom Plugins
+
+You can create your own plugins and register them alongside the built-in ones.
+
+## Minimal plugin
+
+```ts filename="my-app/plugins/strikethrough.ts"
+import { createPlugin } from '@inkstream/editor-core'
+import { toggleMark } from 'prosemirror-commands'
+
+export const strikethroughPlugin = createPlugin({
+  name: 'strikethrough',
+  marks: {
+    strikethrough: {
+      parseDOM: [{ tag: 's' }, { tag: 'del' }, { style: 'text-decoration=line-through' }],
+      toDOM: () => ['s', 0],
+    },
+  },
+  getToolbarItems: (schema) => [
+    {
+      id: 'strikethrough',
+      icon: 'S̶',
+      tooltip: 'Strikethrough',
+      command: toggleMark(schema.marks.strikethrough),
+      isActive: (state) =>
+        state.selection.$from.marks().some(m => m.type === schema.marks.strikethrough),
+    },
+  ],
+  getKeymap: (schema) => ({
+    'Mod-Shift-x': toggleMark(schema.marks.strikethrough),
+  }),
+})
+```
+
+## Plugin with a custom node
+
+```ts filename="my-app/plugins/callout.ts"
+import { createPlugin } from '@inkstream/editor-core'
+import type { Command } from 'prosemirror-state'
+
+const insertCallout: Command = (state, dispatch) => {
+  const { callout } = state.schema.nodes
+  if (!callout) return false
+  if (dispatch) {
+    const node = callout.createAndFill()!
+    dispatch(state.tr.replaceSelectionWith(node))
+  }
+  return true
+}
+
+export const calloutPlugin = createPlugin({
+  name: 'callout',
+  nodes: {
+    callout: {
+      group: 'block',
+      content: 'inline*',
+      parseDOM: [{ tag: 'div[data-type="callout"]' }],
+      toDOM: () => ['div', { 'data-type': 'callout', class: 'callout' }, 0],
+    },
+  },
+  getToolbarItems: (schema) => [
+    {
+      id: 'callout',
+      icon: '💡',
+      tooltip: 'Insert callout',
+      command: insertCallout,
+    },
+  ],
+})
+```
+
+## Using your plugin
+
+```tsx
+import { RichTextEditor } from '@inkstream/react-editor'
+import { boldPlugin } from '@inkstream/editor-core'
+import { calloutPlugin } from './plugins/callout'
+
+<RichTextEditor
+  plugins={[boldPlugin, calloutPlugin]}
+  toolbarLayout={['bold', '|', 'callout']}
+/>
+```
+
+<Callout type="info">
+  Plugins are registered in the order they appear in the `plugins` array. Node/mark names must be globally unique across all registered plugins.
+</Callout>

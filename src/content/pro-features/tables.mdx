@@ -1,0 +1,58 @@
+---
+title: Tables
+---
+
+# Tables
+
+The Table plugin is a Pro feature powered by `prosemirror-tables` with Inkstream extensions.
+
+## Features
+
+- Insert tables via toolbar (choose rows × columns)
+- Select, merge, and split cells
+- Column resizing by dragging handles
+- Double-click handle to auto-fit column
+- Row/column insertion and deletion
+- Cell background color, border style, vertical alignment
+- Table Properties dialog (padding, border radius, shadow, full-width toggle)
+- Export to CSV / import from CSV
+- Exit table with `Tab` (last cell), `ArrowDown` (last row), or `Mod-Enter`
+
+## Setup
+
+See the [Pro Setup guide](/pro-features/setup) for installation instructions.
+
+## Usage
+
+```tsx
+const { validatedTier } = useLicenseValidation({ licenseKey, validationEndpoint })
+const { plugins: lazyPlugins } = useLazyPlugins({
+  validatedTier,
+  loaders: [{
+    tier: 'pro',
+    loader: (tier) =>
+      import('@inkstream-dev/pro-plugins').then(m => ({
+        table: m.createProPlugins(tier).table,
+      })),
+  }],
+})
+```
+
+## Toolbar items
+
+The Table plugin registers a `table` dropdown in the toolbar with sub-menus for:
+
+- Insert table
+- Row actions (insert above/below, delete row)
+- Column actions (insert left/right, delete column)
+- Cell actions (merge, split, properties)
+- Table-level actions (delete, CSV import/export)
+
+## Keyboard shortcuts
+
+| Action | Shortcut |
+|--------|----------|
+| Next cell | `Tab` |
+| Previous cell | `Shift-Tab` |
+| Exit table (append paragraph) | `Mod-Enter` |
+| Exit table downward | `ArrowDown` (from last row) |

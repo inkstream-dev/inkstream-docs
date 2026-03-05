@@ -1,0 +1,42 @@
+---
+title: LicenseManager
+---
+
+# LicenseManager
+
+## Static methods
+
+### `isValidKeyFormat(key: string): boolean`
+
+Checks whether a string matches the Inkstream key format. **For UX only — never use for security decisions.**
+
+```ts
+LicenseManager.isValidKeyFormat('INKSTREAM-PRO-ABC123')   // true
+LicenseManager.isValidKeyFormat('invalid')                 // false
+```
+
+Format: `INKSTREAM-{FREE|PRO|PREMIUM}-[A-Z0-9]+`
+
+### `canTierAccess(userTier: LicenseTier, requiredTier: LicenseTier): boolean`
+
+Returns `true` if `userTier` meets or exceeds `requiredTier`.
+
+```ts
+LicenseManager.canTierAccess('free', 'free')       // true
+LicenseManager.canTierAccess('free', 'pro')        // false
+LicenseManager.canTierAccess('pro', 'pro')         // true
+LicenseManager.canTierAccess('premium', 'pro')     // true
+LicenseManager.canTierAccess('premium', 'premium') // true
+```
+
+## Tier hierarchy
+
+```
+free < pro < premium
+```
+
+## Types
+
+```ts
+type LicenseTier = 'free' | 'pro' | 'premium'
+```

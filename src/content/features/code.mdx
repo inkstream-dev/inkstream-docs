@@ -1,0 +1,26 @@
+---
+title: Code
+---
+
+# Code
+
+Two code plugins are available: inline code and fenced code blocks.
+
+## Usage
+
+```tsx
+import { inlineCodePlugin, codeBlockPlugin } from '@inkstream/editor-core'
+
+<RichTextEditor
+  plugins={[inlineCodePlugin, codeBlockPlugin]}
+  toolbarLayout={['inlineCode', 'codeBlock']}
+/>
+```
+
+## Inline code
+
+Wraps selected text in a `code` mark. Shortcut: `` Mod-` ``
+
+## Code block
+
+Converts the current paragraph to a fenced code block. Input rule: type ` ``` ` at the start of a line.

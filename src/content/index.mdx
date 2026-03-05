@@ -1,0 +1,46 @@
+---
+title: Inkstream — Modular Rich Text Editor SDK
+---
+
+import { Cards } from 'nextra/components'
+
+# Inkstream
+
+**Inkstream** is a modular, ProseMirror-based rich text editor SDK for React. It ships with a plugin system, server-validated freemium licensing, and a private Pro plugin distribution model — designed to be embedded in any React or Next.js application.
+
+## Why Inkstream?
+
+| | Tiptap | Quill | Inkstream |
+|---|---|---|---|
+| Plugin system | ✅ | Partial | ✅ |
+| Freemium licensing | ❌ | ❌ | ✅ |
+| Pro plugin code-splitting | ❌ | ❌ | ✅ |
+| TypeScript-first | ✅ | ❌ | ✅ |
+| ProseMirror foundation | ✅ | ❌ | ✅ |
+
+## Quick Example
+
+```tsx
+import { RichTextEditor } from '@inkstream/react-editor'
+import { boldPlugin, italicPlugin, historyPlugin } from '@inkstream/editor-core'
+
+export default function MyEditor() {
+  return (
+    <RichTextEditor
+      initialContent="<p>Hello world</p>"
+      plugins={[boldPlugin, italicPlugin, historyPlugin]}
+      toolbarLayout={['bold', 'italic', '|', 'history']}
+      onChange={(html) => console.log(html)}
+    />
+  )
+}
+```
+
+## Explore the Docs
+
+<Cards>
+  <Cards.Card title="Getting Started →" href="/getting-started" />
+  <Cards.Card title="Plugin System →" href="/core-concepts/plugin-system" />
+  <Cards.Card title="Pro Features →" href="/pro-features" />
+  <Cards.Card title="API Reference →" href="/api-reference/editor" />
+</Cards>

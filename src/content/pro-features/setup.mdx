@@ -1,0 +1,84 @@
+---
+title: Pro Setup
+---
+
+import { Callout, Steps } from 'nextra/components'
+
+# Pro Setup
+
+<Callout type="info">
+  Pro plugins require a paid license. [Contact us](mailto:hello@inkstream.dev) to purchase.
+</Callout>
+
+<Steps>
+
+### Configure the private registry
+
+```bash
+# .npmrc (project root, do NOT commit the token line)
+@inkstream-dev:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${INKSTREAM_NPM_TOKEN}
+```
+
+Set `INKSTREAM_NPM_TOKEN` in your environment (CI secrets, `.env.local`).
+
+### Install the package
+
+```bash
+pnpm add @inkstream-dev/pro-plugins
+```
+
+### Add a validation endpoint
+
+```ts filename="app/api/validate-license/route.ts"
+import { NextRequest, NextResponse } from 'next/server'
+
+export async function POST(req: NextRequest) {
+  const { licenseKey } = await req.json()
+  // Verify against your license store
+  const tier = await myLicenseService.validate(licenseKey)
+  return NextResponse.json({ isValid: !!tier, tier: tier ?? 'free' })
+}
+```
+
+### Load Pro plugins lazily
+
+```tsx
+"use client"
+
+import { RichTextEditor, useLicenseValidation, useLazyPlugins } from '@inkstream/react-editor'
+import { freePlugins } from './plugins'
+
+export default function Editor({ licenseKey }: { licenseKey: string }) {
+  const { validatedTier } = useLicenseValidation({
+    licenseKey,
+    validationEndpoint: '/api/validate-license',
+  })
+
+  const { plugins: lazyPlugins } = useLazyPlugins({
+    validatedTier,
+    loaders: [
+      {
+        tier: 'pro',
+        loader: (tier) =>
+          import('@inkstream-dev/pro-plugins').then((m) => ({
+            table: m.createProPlugins(tier).table,
+          })),
+      },
+    ],
+  })
+
+  return (
+    <RichTextEditor
+      plugins={[...freePlugins, ...lazyPlugins]}
+      toolbarLayout={['bold', 'italic', '|', 'table']}
+    />
+  )
+}
+```
+
+</Steps>
+
+<Callout type="warning">
+  Never import Pro plugin code unconditionally at the top of a file. Always use `useLazyPlugins` with dynamic `import()` so the Pro bundle is not downloaded for free-tier users.
+</Callout>

@@ -1,0 +1,69 @@
+---
+title: Plugin Interface
+---
+
+# Plugin Interface
+
+## Plugin
+
+```ts
+interface Plugin {
+  /** Unique identifier — also used as toolbar item ID */
+  name: string
+
+  /** Feature gate tier (default: 'free') */
+  tier?: 'free' | 'pro' | 'premium'
+
+  /** ProseMirror node specs contributed by this plugin */
+  nodes?: Record<string, NodeSpec>
+
+  /** ProseMirror mark specs contributed by this plugin */
+  marks?: Record<string, MarkSpec>
+
+  /** Return ProseMirror state plugins */
+  getProseMirrorPlugins?(schema: Schema): PMPlugin[]
+
+  /** Return toolbar items for this plugin */
+  getToolbarItems?(schema: Schema, options?: Record<string, unknown>): ToolbarItem[]
+
+  /** Return ProseMirror input rules */
+  getInputRules?(schema: Schema): InputRule[]
+
+  /** Return keymap bindings { 'Mod-b': command } */
+  getKeymap?(schema: Schema): Record<string, Command>
+}
+```
+
+## createPlugin
+
+Factory function for creating type-safe plugins with defaults:
+
+```ts
+import { createPlugin } from '@inkstream/editor-core'
+
+const myPlugin = createPlugin({
+  name: 'my-plugin',
+  tier: 'free',
+  marks: { ... },
+  getProseMirrorPlugins: (schema) => [...],
+  getToolbarItems: (schema) => [...],
+  getInputRules: (schema) => [...],
+  getKeymap: (schema) => ({ ... }),
+})
+```
+
+## PluginManager
+
+```ts
+import { PluginManager, inkstreamSchema } from '@inkstream/editor-core'
+
+const manager = new PluginManager()
+manager.register(boldPlugin)
+manager.register(italicPlugin)
+
+// Build the schema after all plugins are registered
+const schema = inkstreamSchema(manager)
+
+// Get all ProseMirror plugins for EditorState
+const pmPlugins = manager.getProseMirrorPlugins(schema)
+```

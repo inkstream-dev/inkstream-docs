@@ -1,0 +1,76 @@
+---
+title: RichTextEditor
+---
+
+# RichTextEditor
+
+The main React component for embedding Inkstream.
+
+## Import
+
+```ts
+import { RichTextEditor } from '@inkstream/react-editor'
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `plugins` | `Plugin[]` | `[]` | Array of plugin instances to register |
+| `initialContent` | `string` | `''` | Initial HTML content |
+| `toolbarLayout` | `(string \| '\|')[]` | `[]` (all items) | Ordered toolbar item IDs; `'|'` = separator |
+| `pluginOptions` | `Record<string, unknown>` | `{}` | Per-plugin options forwarded to `getToolbarItems` |
+| `onChange` | `(html: string) => void` | — | Called on every content change |
+| `licenseKey` | `string` | — | License key for display purposes |
+| `licenseValidationEndpoint` | `string` | — | API endpoint for server-side validation |
+| `readOnly` | `boolean` | `false` | Prevents editing |
+| `className` | `string` | — | Additional CSS class for the wrapper |
+| `style` | `CSSProperties` | — | Inline styles for the wrapper |
+
+## Example
+
+```tsx
+<RichTextEditor
+  plugins={[boldPlugin, italicPlugin, historyPlugin]}
+  initialContent="<p>Hello</p>"
+  toolbarLayout={['bold', 'italic', '|', 'undo', 'redo']}
+  onChange={(html) => setValue(html)}
+  licenseValidationEndpoint="/api/validate-license"
+  licenseKey={licenseKey}
+/>
+```
+
+## useLicenseValidation
+
+```ts
+import { useLicenseValidation } from '@inkstream/react-editor'
+
+const {
+  validatedTier,    // 'free' | 'pro' | 'premium'
+  isValidating,     // boolean
+  isValid,          // boolean
+  error,            // string | null
+} = useLicenseValidation({
+  licenseKey: 'INKSTREAM-PRO-ABC123',
+  validationEndpoint: '/api/validate-license',
+})
+```
+
+## useLazyPlugins
+
+```ts
+import { useLazyPlugins } from '@inkstream/react-editor'
+
+const {
+  plugins,          // Plugin[] — loaded plugins (empty until loaded)
+  isLoading,        // boolean
+} = useLazyPlugins({
+  validatedTier,    // from useLicenseValidation
+  loaders: [
+    {
+      tier: 'pro',
+      loader: (tier) => import('./pro').then(m => ({ myPlugin: m.createMyPlugin(tier) })),
+    },
+  ],
+})
+```
