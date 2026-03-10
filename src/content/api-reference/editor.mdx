@@ -31,7 +31,7 @@ import { RichTextEditor } from '@inkstream/react-editor'
 
 ```tsx
 <RichTextEditor
-  plugins={[boldPlugin, italicPlugin, historyPlugin]}
+  plugins={[availablePlugins.bold, availablePlugins.italic, availablePlugins.history]}
   initialContent="<p>Hello</p>"
   toolbarLayout={['bold', 'italic', '|', 'undo', 'redo']}
   onChange={(html) => setValue(html)}
