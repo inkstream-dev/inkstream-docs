@@ -26,7 +26,7 @@ const navbar = (
 const footer = (
   <Footer>
     MIT {new Date().getFullYear()} ©{' '}
-    <a href="https://inkstream.dev" target="_blank" rel="noreferrer">
+    <a href="https://docs.inkstream.dev" target="_blank" rel="noreferrer">
       Inkstream
     </a>
   </Footer>

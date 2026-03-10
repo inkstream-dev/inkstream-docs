@@ -13,33 +13,37 @@ A minimal but complete example with all standard free plugins enabled.
 
 import { useState } from 'react'
 import { RichTextEditor } from '@inkstream/react-editor'
-import {
-  boldPlugin, italicPlugin, underlinePlugin, strikethroughPlugin,
-  textColorPlugin, highlightPlugin, alignmentPlugin,
-  bulletListPlugin, orderedListPlugin, taskListPlugin,
-  blockquotePlugin, codePlugin, dividerPlugin,
-  undoPlugin, redoPlugin,
-} from '@inkstream/editor-core'
+import { availablePlugins } from '@inkstream/editor-core'
 import { headingPlugin } from '@inkstream/heading'
-import { imagePlugin } from '@inkstream/image'
-import { linkPlugin } from '@inkstream/link-bubble'
+import { linkBubbleWrapperPlugin } from '@inkstream/link-bubble'
 
 const PLUGINS = [
-  headingPlugin, boldPlugin, italicPlugin, underlinePlugin, strikethroughPlugin,
-  textColorPlugin, highlightPlugin, alignmentPlugin,
-  bulletListPlugin, orderedListPlugin, taskListPlugin,
-  blockquotePlugin, codePlugin, imagePlugin, linkPlugin,
-  dividerPlugin, undoPlugin, redoPlugin,
+  availablePlugins.bold,
+  availablePlugins.italic,
+  availablePlugins.underline,
+  availablePlugins.strike,
+  availablePlugins.textColor,
+  availablePlugins.highlight,
+  availablePlugins.alignment,
+  availablePlugins.lists,
+  availablePlugins.superscript,
+  availablePlugins.subscript,
+  availablePlugins.blockquote,
+  availablePlugins.codeBlock,
+  availablePlugins.image,
+  availablePlugins.horizontalLine, 
+  availablePlugins.history,
+  linkBubbleWrapperPlugin
 ]
 
 const TOOLBAR = [
   'heading', '|',
-  'bold', 'italic', 'underline', 'strikethrough', '|',
+  'bold', 'italic', 'underline', 'strike', '|',
   'textColor', 'highlight', '|',
-  'alignment', '|',
-  'bulletList', 'orderedList', 'taskList', '|',
+  "alignLeft", "alignCenter", "alignRight", "alignJustify", "|",
+  'lists', '|',
   'blockquote', 'code', 'image', 'link', '|',
-  'divider', 'undo', 'redo',
+  'horizontalLine', 'undo', 'redo',
 ]
 
 export default function FullEditor() {

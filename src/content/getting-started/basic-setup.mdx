@@ -12,12 +12,9 @@ Components that use Inkstream must include the `"use client"` directive — Pros
 "use client"
 
 import { RichTextEditor } from '@inkstream/react-editor'
-import {
-  boldPlugin, italicPlugin, underlinePlugin,
-  strikethroughPlugin, historyPlugin,
-} from '@inkstream/editor-core'
+import { availablePlugins } from '@inkstream/editor-core'
 
-const PLUGINS = [boldPlugin, italicPlugin, underlinePlugin, strikethroughPlugin, historyPlugin]
+const PLUGINS = [availablePlugins.bold, availablePlugins.italic, availablePlugins.underline, availablePlugins.strike, availablePlugins.history]
 
 export default function EditorPage() {
   return (
@@ -33,17 +30,3 @@ export default function EditorPage() {
 ## Next.js Pages Router
 
 No directive needed. Same import pattern, usable directly in any page or component.
-
-## CSS
-
-Import the editor stylesheet once in your layout:
-
-```tsx filename="app/layout.tsx"
-import '@inkstream/react-editor/dist/styles.css'
-```
-
-Or in `pages/_app.tsx`:
-
-```tsx
-import '@inkstream/react-editor/dist/styles.css'
-```
