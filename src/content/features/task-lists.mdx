@@ -9,11 +9,11 @@ Task lists render checkboxes that users can toggle directly in the editor.
 ## Usage
 
 ```tsx
-import { taskListPlugin } from '@inkstream/editor-core'
+import { availablePlugins } from '@inkstream/editor-core'
 
 <RichTextEditor
-  plugins={[taskListPlugin]}
-  toolbarLayout={['taskList']}
+  plugins={[availablePlugins.list]}
+  toolbarLayout={['lists']}
 />
 ```
 

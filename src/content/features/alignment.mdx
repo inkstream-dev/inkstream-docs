@@ -7,11 +7,11 @@ title: Alignment
 ## Usage
 
 ```tsx
-import { alignmentPlugin } from '@inkstream/editor-core'
+import { availablePlugins } from '@inkstream/editor-core'
 
 <RichTextEditor
-  plugins={[alignmentPlugin]}
-  toolbarLayout={['alignment']}
+  plugins={[availablePlugins.alignment]}
+  toolbarLayout={['alignLeft', 'alignCenter', 'alignRight', 'alignJustify']}
 />
 ```
 

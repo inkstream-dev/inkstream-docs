@@ -21,15 +21,20 @@ title: Text Formatting
 ## Usage
 
 ```tsx
-import {
-  boldPlugin, italicPlugin, underlinePlugin, strikethroughPlugin,
-  superscriptPlugin, subscriptPlugin,
-  textColorPlugin, highlightPlugin, inlineCodePlugin,
-} from '@inkstream/editor-core'
+import { availablePlugins } from '@inkstream/editor-core'
 
 <RichTextEditor
-  plugins={[boldPlugin, italicPlugin, underlinePlugin, strikethroughPlugin]}
-  toolbarLayout={['bold', 'italic', 'underline', 'strikethrough']}
+  plugins={[
+    availablePlugins.bold,
+    availablePlugins.italic,
+    availablePlugins.underline,
+    availablePlugins.strike,
+    availablePlugins.superscript,
+    availablePlugins.subscript,
+    availablePlugins.textColor,
+    availablePlugins.highlight, 
+    availablePlugins.code]}
+  toolbarLayout={['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'code']}
 />
 ```
 
@@ -39,7 +44,7 @@ import {
 
 ```tsx
 <RichTextEditor
-  plugins={[textColorPlugin, highlightPlugin]}
+  plugins={[availablePlugins.textColor, availablePlugins.highlight]}
   toolbarLayout={['textColor', 'highlight']}
   pluginOptions={{
     textColor: {

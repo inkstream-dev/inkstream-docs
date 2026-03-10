@@ -9,11 +9,11 @@ Two code plugins are available: inline code and fenced code blocks.
 ## Usage
 
 ```tsx
-import { inlineCodePlugin, codeBlockPlugin } from '@inkstream/editor-core'
+import { availablePlugins } from '@inkstream/editor-core'
 
 <RichTextEditor
-  plugins={[inlineCodePlugin, codeBlockPlugin]}
-  toolbarLayout={['inlineCode', 'codeBlock']}
+  plugins={[availablePlugins.code, availablePlugins.codeBlock]}
+  toolbarLayout={['code', 'codeBlock']}
 />
 ```
 

@@ -15,11 +15,11 @@ title: Lists
 ## Usage
 
 ```tsx
-import { bulletListPlugin, orderedListPlugin, indentPlugin } from '@inkstream/editor-core'
+import { availablePlugins } from '@inkstream/editor-core'
 
 <RichTextEditor
-  plugins={[bulletListPlugin, orderedListPlugin, indentPlugin]}
-  toolbarLayout={['bulletList', 'orderedList', '|', 'indent', 'outdent']}
+  plugins={[availablePlugins.lists, availablePlugins.indent]}
+  toolbarLayout={['lists', '|', 'indent', 'outdent']}
 />
 ```
 
