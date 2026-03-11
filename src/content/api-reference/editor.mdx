@@ -2,6 +2,8 @@
 title: RichTextEditor
 ---
 
+import { Callout } from 'nextra/components'
+
 # RichTextEditor
 
 The main React component for embedding Inkstream.
@@ -16,20 +18,25 @@ import { RichTextEditor } from '@inkstream/react-editor'
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `plugins` | `Plugin[]` | `[]` | Array of plugin instances to register |
 | `initialContent` | `string` | `''` | Initial HTML content |
-| `toolbarLayout` | `(string \| '\|')[]` | `[]` (all items) | Ordered toolbar item IDs; `'|'` = separator |
+| `plugins` | `Plugin[]` | all built-in plugins | Plugin instances to register |
 | `pluginOptions` | `Record<string, unknown>` | `{}` | Per-plugin options forwarded to `getToolbarItems` |
-| `onChange` | `(html: string) => void` | — | Called on every content change |
-| `licenseKey` | `string` | — | License key for display purposes |
-| `licenseValidationEndpoint` | `string` | — | API endpoint for server-side validation |
-| `readOnly` | `boolean` | `false` | Prevents editing |
-| `className` | `string` | — | Additional CSS class for the wrapper |
-| `style` | `CSSProperties` | — | Inline styles for the wrapper |
+| `toolbarLayout` | `(string \| '\|')[]` | `[]` (all items) | Ordered toolbar item IDs; `'|'` = separator |
+| `licenseKey` | `string` | — | License key string |
+| `licenseValidationEndpoint` | `string` | — | URL of your server-side POST validation endpoint |
+| `onLicenseError` | `(plugin, tier) => void` | — | Called when a plugin's tier requirement is not met |
+| `onChange` | `(html: string) => void` | — | Called on every content change with serialized HTML |
+| `onEditorReady` | `(view: EditorView) => void` | — | Called once with the `EditorView` instance after mount |
+| `theme` | `ThemeMode` | `'auto'` | Colour scheme: `'auto'` (OS), `'light'`, or `'dark'` |
+| `showThemeToggle` | `boolean` | `false` | Adds an Auto/Light/Dark switcher button at the right end of the toolbar |
+| `onThemeChange` | `(theme: ThemeMode) => void` | — | Called when the theme changes (toggle click or prop change) |
 
 ## Example
 
 ```tsx
+import { RichTextEditor } from '@inkstream/react-editor'
+import { availablePlugins } from '@inkstream/editor-core'
+
 <RichTextEditor
   plugins={[availablePlugins.bold, availablePlugins.italic, availablePlugins.history]}
   initialContent="<p>Hello</p>"
@@ -37,8 +44,18 @@ import { RichTextEditor } from '@inkstream/react-editor'
   onChange={(html) => setValue(html)}
   licenseValidationEndpoint="/api/validate-license"
   licenseKey={licenseKey}
+  showThemeToggle
 />
 ```
+
+## ThemeMode type
+
+```ts
+import type { ThemeMode } from '@inkstream/react-editor'
+// 'auto' | 'light' | 'dark'
+```
+
+See the [Theming & Dark Mode guide](/guides/theming) for full usage examples.
 
 ## useLicenseValidation
 
@@ -46,15 +63,18 @@ import { RichTextEditor } from '@inkstream/react-editor'
 import { useLicenseValidation } from '@inkstream/react-editor'
 
 const {
-  validatedTier,    // 'free' | 'pro' | 'premium'
-  isValidating,     // boolean
-  isValid,          // boolean
-  error,            // string | null
+  tier,           // 'free' | 'pro' | 'premium' — server-validated
+  isValidating,   // boolean
+  error,          // string | null
 } = useLicenseValidation({
   licenseKey: 'INKSTREAM-PRO-ABC123',
   validationEndpoint: '/api/validate-license',
 })
 ```
+
+<Callout type="warning">
+  Without `validationEndpoint`, `tier` is always `'free'`. The system is **secure by default** — never derives tier from the key string alone.
+</Callout>
 
 ## useLazyPlugins
 
@@ -62,15 +82,44 @@ const {
 import { useLazyPlugins } from '@inkstream/react-editor'
 
 const {
-  plugins,          // Plugin[] — loaded plugins (empty until loaded)
-  isLoading,        // boolean
+  loadedPlugins,  // Plugin[] — empty until loaded
+  isLoading,      // boolean
+  error,          // string | null
 } = useLazyPlugins({
-  validatedTier,    // from useLicenseValidation
-  loaders: [
+  validatedTier,   // from useLicenseValidation
+  lazyPlugins: [
     {
-      tier: 'pro',
-      loader: (tier) => import('./pro').then(m => ({ myPlugin: m.createMyPlugin(tier) })),
+      loader: (tier) =>
+        import('@inkstream/pro-plugins').then(m => ({ table: m.createProPlugins(tier).table })),
+      requiredTier: 'pro',
+      pluginKey: 'table',
     },
   ],
 })
+```
+
+The `loader` function receives the server-validated `tier` as its first argument. See the [Lazy Loading guide](/guides/lazy-loading) for details.
+
+## EditorWithTableDialog
+
+`EditorWithTableDialog` wraps `RichTextEditor` and adds a table-insertion dialog. It accepts a forwarded ref and all the same props as `RichTextEditor`.
+
+```tsx
+import { useRef } from 'react'
+import { EditorWithTableDialog } from '@inkstream/react-editor'
+import type { EditorHandle } from '@inkstream/react-editor'
+
+const editorRef = useRef<EditorHandle>(null)
+
+<EditorWithTableDialog
+  ref={editorRef}
+  initialContent="<p>…</p>"
+  showThemeToggle
+  onChange={(html) => console.log(html)}
+/>
+
+// Imperative API
+editorRef.current?.getContent()  // → current HTML string
+editorRef.current?.focus()
+```
 ```

@@ -1,0 +1,188 @@
+---
+title: Theming & Dark Mode
+---
+
+import { Callout, Tabs } from 'nextra/components'
+
+# Theming & Dark Mode
+
+Inkstream ships with a full CSS custom-properties theming system. The editor auto-detects the user's OS colour scheme out of the box — or you can take full control via props and CSS token overrides.
+
+## How it works
+
+All visual values are defined as CSS custom properties (`--ink-*`) scoped to `.inkstream-editor-wrapper`. This means:
+
+- They never leak into the rest of your application
+- You can override them per-instance with a single CSS rule
+- Dark mode swaps the same set of tokens — no duplicate rules needed
+
+## The three theme modes
+
+| Mode | Prop value | Behaviour |
+|------|-----------|-----------|
+| **Auto** | `'auto'` (default) | Follows the user's OS via `prefers-color-scheme`. No code needed. |
+| **Light** | `'light'` | Forces the light palette regardless of OS setting. |
+| **Dark** | `'dark'` | Forces the dark palette regardless of OS setting. |
+
+---
+
+## Quickstart — built-in toolbar toggle
+
+The fastest way to add theme switching: pass `showThemeToggle` and a monitor/sun/moon button appears at the right end of the toolbar. Users can switch between Auto, Light, and Dark without any extra wiring.
+
+```tsx
+import { RichTextEditor } from '@inkstream/react-editor'
+
+export default function MyEditor() {
+  return (
+    <RichTextEditor
+      initialContent="<p>Hello, world!</p>"
+      showThemeToggle
+    />
+  )
+}
+```
+
+<Callout type="info">
+  `showThemeToggle` works as a fully self-contained uncontrolled toggle. The editor manages its own theme state internally — you don't need to wire up any state yourself.
+</Callout>
+
+---
+
+## Forcing a specific theme
+
+Pass the `theme` prop to lock the editor to a specific colour scheme regardless of the user's OS:
+
+```tsx
+// Always dark
+<RichTextEditor theme="dark" initialContent="<p>…</p>" />
+
+// Always light
+<RichTextEditor theme="light" initialContent="<p>…</p>" />
+
+// Follows OS — same as the default
+<RichTextEditor theme="auto" initialContent="<p>…</p>" />
+```
+
+This is useful when your application already has its own global dark-mode toggle and you want the editor to follow it.
+
+---
+
+## Controlled theme (sync with external state)
+
+Use `theme` + `onThemeChange` together to fully bind the editor theme to your own state. The built-in toolbar toggle still works and calls `onThemeChange` when clicked.
+
+```tsx
+import { useState } from 'react'
+import { RichTextEditor } from '@inkstream/react-editor'
+import type { ThemeMode } from '@inkstream/react-editor'
+
+export default function MyEditor() {
+  const [theme, setTheme] = useState<ThemeMode>('auto')
+
+  return (
+    <>
+      {/* Your own UI controls */}
+      <select value={theme} onChange={e => setTheme(e.target.value as ThemeMode)}>
+        <option value="auto">Auto (system)</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+
+      <RichTextEditor
+        theme={theme}
+        showThemeToggle
+        onThemeChange={setTheme}
+        initialContent="<p>…</p>"
+      />
+    </>
+  )
+}
+```
+
+<Callout type="default">
+  When `theme` is provided, the editor syncs to it. When `showThemeToggle` is also present, clicking the toolbar toggle calls `onThemeChange` — keep your state in sync by passing `setTheme` (or equivalent).
+</Callout>
+
+---
+
+## Correct usage pattern
+
+<Callout type="warning">
+  **Important:** Do **not** wrap `<RichTextEditor />` in an outer div and apply `inkstream-dark` / `inkstream-light` classes to that outer div. The editor renders `.inkstream-editor-wrapper` itself — the theme classes must be applied to it via the `theme` prop.
+
+  ```tsx
+  // ❌ Wrong — the class is on the wrong element
+  <div className="inkstream-editor-wrapper inkstream-dark">
+    <RichTextEditor … />
+  </div>
+
+  // ✅ Correct — use the prop
+  <RichTextEditor theme="dark" … />
+  ```
+</Callout>
+
+---
+
+## CSS token overrides (custom branding)
+
+All colours, shadows, and radii are tokens you can override per-instance. No forking or patching the package required.
+
+```css
+/* Override tokens for a specific editor instance */
+.my-app .inkstream-editor-wrapper {
+  --ink-accent:      #7c3aed;   /* purple brand instead of indigo */
+  --ink-radius-md:   4px;       /* flatter corners */
+  --ink-bg:          #fafaf9;   /* warm white background */
+}
+```
+
+### Full token reference
+
+| Token | Light default | Dark default | Description |
+|-------|--------------|-------------|-------------|
+| `--ink-bg` | `#ffffff` | `#1e1e2e` | Editor background |
+| `--ink-surface` | `#f8fafc` | `#252537` | Toolbar / panel background |
+| `--ink-surface-hover` | `#f1f5f9` | `#2e2e44` | Hover state fill |
+| `--ink-surface-active` | `#eef2ff` | `#2d2b55` | Active / pressed state |
+| `--ink-border` | `#e2e8f0` | `#383852` | Default border |
+| `--ink-border-muted` | `#f1f5f9` | `#2a2a3e` | Subtle border |
+| `--ink-border-accent` | `#c7d2fe` | `#4338ca` | Accent border |
+| `--ink-text` | `#0f172a` | `#e2e8f0` | Primary text |
+| `--ink-text-muted` | `#64748b` | `#94a3b8` | Secondary text |
+| `--ink-text-subtle` | `#94a3b8` | `#64748b` | Tertiary / placeholder text |
+| `--ink-accent` | `#4f46e5` | `#818cf8` | Brand / active colour |
+| `--ink-accent-hover` | `#3730a3` | `#a5b4fc` | Accent hover |
+| `--ink-accent-bg` | `#eef2ff` | `#1e1b4b` | Accent tinted background |
+| `--ink-accent-border` | `#c7d2fe` | `#4338ca` | Accent border |
+| `--ink-danger` | `#e11d48` | `#fb7185` | Destructive / error colour |
+| `--ink-shadow-sm` | `0 1px 3px …` | darker | Small shadow |
+| `--ink-shadow-md` | `0 4px 16px …` | darker | Dropdown / panel shadow |
+| `--ink-radius-sm` | `5px` | same | Button / small element radius |
+| `--ink-radius-md` | `8px` | same | Card / panel radius |
+
+---
+
+## Dark mode in EditorWithTableDialog
+
+`EditorWithTableDialog` accepts the same theme props and passes them through to `RichTextEditor`:
+
+```tsx
+import { EditorWithTableDialog } from '@inkstream/react-editor'
+
+<EditorWithTableDialog
+  initialContent="<p>…</p>"
+  theme="dark"
+  showThemeToggle
+  onThemeChange={(t) => console.log('theme changed to', t)}
+/>
+```
+
+---
+
+## TypeScript
+
+```ts
+import type { ThemeMode } from '@inkstream/react-editor'
+// ThemeMode = 'auto' | 'light' | 'dark'
+```

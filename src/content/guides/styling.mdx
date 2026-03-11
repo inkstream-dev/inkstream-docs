@@ -2,75 +2,133 @@
 title: Styling the Editor
 ---
 
+import { Callout } from 'nextra/components'
+
 # Styling the Editor
 
-## CSS variables
+## CSS tokens
 
-The editor exposes CSS variables for theming. Override them in your global stylesheet:
+All visual values in the editor are CSS custom properties scoped to `.inkstream-editor-wrapper`. Override them in your own stylesheet — no need to patch or fork the package.
 
 ```css
-.inkstream-editor {
-  --ink-border: #e2e8f0;
-  --ink-toolbar-bg: #ffffff;
-  --ink-toolbar-border: #e2e8f0;
-  --ink-button-hover: #f1f5f9;
-  --ink-button-active: #e2e8f0;
-  --ink-focus-ring: #3b82f6;
-  --ink-content-font: 'Inter', sans-serif;
-  --ink-content-font-size: 16px;
-  --ink-content-line-height: 1.6;
-  --ink-content-min-height: 200px;
+.my-app .inkstream-editor-wrapper {
+  /* Brand accent (buttons, focus rings, active states) */
+  --ink-accent:        #7c3aed;
+
+  /* Backgrounds */
+  --ink-bg:            #fafaf9;     /* editor canvas */
+  --ink-surface:       #f5f3ff;     /* toolbar background */
+
+  /* Borders */
+  --ink-border:        #ddd6fe;
+  --ink-border-accent: #a78bfa;
+
+  /* Typography */
+  --ink-text:          #1e1b4b;
+  --ink-text-muted:    #6d28d9;
+
+  /* Shape */
+  --ink-radius-sm:     4px;
+  --ink-radius-md:     8px;
 }
 ```
+
+<Callout type="info">
+  For the full list of available tokens (including dark-mode defaults), see the [Theming & Dark Mode](/guides/theming#full-token-reference) guide.
+</Callout>
 
 ## Dark mode
 
+The editor handles dark mode automatically. Override tokens for each scheme separately if you want custom colours in both:
+
 ```css
-.dark .inkstream-editor {
-  --ink-border: #334155;
-  --ink-toolbar-bg: #1e293b;
-  --ink-toolbar-border: #334155;
-  --ink-button-hover: #334155;
-  --ink-button-active: #475569;
+/* Custom light overrides */
+.my-app .inkstream-editor-wrapper {
+  --ink-accent: #7c3aed;
+}
+
+/* Custom dark overrides (auto via OS, or .inkstream-dark class) */
+@media (prefers-color-scheme: dark) {
+  .my-app .inkstream-editor-wrapper:not(.inkstream-light) {
+    --ink-accent: #a78bfa;
+    --ink-bg:     #1a1625;
+  }
+}
+
+/* Or target the forced-dark class directly */
+.my-app .inkstream-editor-wrapper.inkstream-dark {
+  --ink-accent: #a78bfa;
+  --ink-bg:     #1a1625;
 }
 ```
 
-## Editor container
+<Callout type="default">
+  Use the `theme` prop (or `showThemeToggle`) to control which scheme is active — **never** apply `inkstream-dark` / `inkstream-light` to an outer wrapper div. See the [Theming guide](/guides/theming) for full details.
+</Callout>
+
+## Scoping to a specific editor instance
+
+Wrap the editor in a container with a custom class and target it:
 
 ```tsx
-<div className="my-editor-wrapper">
-  <RichTextEditor plugins={plugins} />
+<div className="my-editor">
+  <RichTextEditor plugins={plugins} initialContent="<p>…</p>" />
 </div>
 ```
 
 ```css
-.my-editor-wrapper .inkstream-editor {
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+.my-editor .inkstream-editor-wrapper {
+  --ink-radius-md: 0;     /* flush / square corners for embedded use */
+  border: none;           /* remove the package border */
 }
 
-.my-editor-wrapper .inkstream-content {
-  min-height: 400px;
-  padding: 24px;
-}
-```
-
-## Prose content styling
-
-Target `.inkstream-content` for typography inside the editor:
-
-```css
-.inkstream-content {
+.my-editor .ProseMirror {
+  min-height: 500px;
+  padding: 2rem;
   font-family: 'Georgia', serif;
   font-size: 18px;
   line-height: 1.8;
 }
+```
 
-.inkstream-content h1 { font-size: 2rem; font-weight: 700; }
-.inkstream-content h2 { font-size: 1.5rem; font-weight: 600; }
-.inkstream-content blockquote {
-  border-left: 4px solid #6366f1;
+## Content typography
+
+Target `.ProseMirror` for the editable area — this is the ProseMirror DOM node:
+
+```css
+/* Headings */
+.my-editor .ProseMirror h1 { font-size: 2rem;   font-weight: 700; }
+.my-editor .ProseMirror h2 { font-size: 1.5rem; font-weight: 600; }
+.my-editor .ProseMirror h3 { font-size: 1.2rem; font-weight: 600; }
+
+/* Blockquote */
+.my-editor .ProseMirror blockquote {
+  border-left: 4px solid var(--ink-accent);
   padding-left: 1rem;
-  color: #64748b;
+  color: var(--ink-text-muted);
+}
+
+/* Inline code */
+.my-editor .ProseMirror code {
+  background: var(--ink-surface-hover);
+  border-radius: var(--ink-radius-sm);
+  padding: 1px 5px;
+  font-size: 0.875em;
 }
 ```
+
+## Tailwind v4 preflight
+
+If your app uses Tailwind v4, its CSS preflight resets `<a>`, heading, list, `<strong>`, and `<em>` styles. You'll need to restore these inside the editor:
+
+```css
+.my-editor .ProseMirror h1,
+.my-editor .ProseMirror h2,
+.my-editor .ProseMirror h3 { font-weight: 700; margin: 0.75em 0 0.4em; }
+
+.my-editor .ProseMirror ul   { list-style: disc;    padding-left: 1.5rem; }
+.my-editor .ProseMirror ol   { list-style: decimal; padding-left: 1.5rem; }
+.my-editor .ProseMirror strong { font-weight: 600; }
+.my-editor .ProseMirror em     { font-style: italic; }
+```
+
