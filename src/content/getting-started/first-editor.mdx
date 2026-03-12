@@ -13,11 +13,12 @@ A minimal but complete example with all standard free plugins enabled.
 
 import { useState } from 'react'
 import { RichTextEditor } from '@inkstream/react-editor'
-import { availablePlugins } from '@inkstream/editor-core'
+import { availablePlugins } from "@inkstream/starter-kit"
 import { headingPlugin } from '@inkstream/heading'
 import { linkBubbleWrapperPlugin } from '@inkstream/link-bubble'
 
 const PLUGINS = [
+  availablePlugins.paragraph,
   availablePlugins.bold,
   availablePlugins.italic,
   availablePlugins.underline,

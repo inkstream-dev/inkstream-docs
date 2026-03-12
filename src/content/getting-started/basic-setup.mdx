@@ -12,9 +12,9 @@ Components that use Inkstream must include the `"use client"` directive — Pros
 "use client"
 
 import { RichTextEditor } from '@inkstream/react-editor'
-import { availablePlugins } from '@inkstream/editor-core'
+import { availablePlugins } from "@inkstream/starter-kit"
 
-const PLUGINS = [availablePlugins.bold, availablePlugins.italic, availablePlugins.underline, availablePlugins.strike, availablePlugins.history]
+const PLUGINS = [availablePlugins.paragraph, availablePlugins.bold, availablePlugins.italic, availablePlugins.underline, availablePlugins.strike, availablePlugins.history]
 
 export default function EditorPage() {
   return (

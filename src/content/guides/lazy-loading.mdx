@@ -33,9 +33,9 @@ const { plugins, isLoading } = useLazyPlugins({
 "use client"
 
 import { RichTextEditor, useLicenseValidation, useLazyPlugins } from '@inkstream/react-editor'
-import { availablePlugins } from '@inkstream/editor-core'
+import { availablePlugins } from "@inkstream/starter-kit"
 
-const FREE_PLUGINS = [availablePlugins.bold, availablePlugins.italic, availablePlugins.history]
+const FREE_PLUGINS = [availablePlugins.paragraph, availablePlugins.bold, availablePlugins.italic, availablePlugins.history]
 
 export default function Editor({ licenseKey }: { licenseKey: string }) {
   const { validatedTier, isValidating } = useLicenseValidation({

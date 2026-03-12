@@ -21,10 +21,11 @@ title: Text Formatting
 ## Usage
 
 ```tsx
-import { availablePlugins } from '@inkstream/editor-core'
+import { availablePlugins } from "@inkstream/starter-kit"
 
 <RichTextEditor
   plugins={[
+    availablePlugins.paragraph,
     availablePlugins.bold,
     availablePlugins.italic,
     availablePlugins.underline,
