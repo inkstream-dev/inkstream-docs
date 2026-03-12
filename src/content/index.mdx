@@ -22,13 +22,17 @@ import { Cards } from 'nextra/components'
 
 ```tsx
 import { RichTextEditor } from '@inkstream/react-editor'
-import { boldPlugin, italicPlugin, historyPlugin } from '@inkstream/editor-core'
+import { availablePlugins } from '@inkstream/starter-kit'
 
 export default function MyEditor() {
   return (
     <RichTextEditor
       initialContent="<p>Hello world</p>"
-      plugins={[boldPlugin, italicPlugin, historyPlugin]}
+      plugins={[
+          availablePlugins.paragraph, 
+          availablePlugins.bold, 
+          availablePlugins.italic, availablePlugins.history
+        ]}
       toolbarLayout={['bold', 'italic', '|', 'history']}
       onChange={(html) => console.log(html)}
     />
